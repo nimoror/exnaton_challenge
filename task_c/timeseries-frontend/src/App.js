@@ -14,6 +14,8 @@ import {
   Legend,
 } from 'chart.js';
 import { Chart } from 'react-chartjs-2';
+import { Container, Typography, Button, Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import './DatePickerStyles.css';
 
 // Register necessary Chart.js components
 ChartJS.register(
@@ -67,7 +69,7 @@ const App = () => {
   };
 
   const chartData = {
-    labels: dataPV.map(d => d.timestamp), // Assuming PV and Load have the same timestamps
+    labels: dataPV.map(d => new Date(d.timestamp).toLocaleString()), // Assuming PV and Load have the same timestamps
     datasets: [
       {
         label: 'PV',
@@ -115,10 +117,11 @@ const App = () => {
   };
 
   return (
-    <div style={{ textAlign: 'center' }}>
-      <h1>Exnaton Energy HUB</h1>
-      <div>
-        <span>Enter: Date_start (YYYY:MM:DD:HH:mm)</span>
+    <Container>
+      <Typography variant="h3" align="center" gutterBottom>
+        Exnaton Energy HUB
+      </Typography>
+      <Box display="flex" justifyContent="center" mb={2}>
         <DatePicker
           selected={startDate}
           onChange={date => setStartDate(date)}
@@ -127,10 +130,8 @@ const App = () => {
           timeFormat="HH:mm"
           minDate={new Date('2023-02-01')}
           maxDate={new Date('2023-02-28')}
+          customInput={<Button variant="outlined">Start Date</Button>}
         />
-      </div>
-      <div>
-        <span>Enter: Date_end (YYYY:MM:DD:HH:mm)</span>
         <DatePicker
           selected={endDate}
           onChange={date => setEndDate(date)}
@@ -139,53 +140,67 @@ const App = () => {
           timeFormat="HH:mm"
           minDate={new Date('2023-02-01')}
           maxDate={new Date('2023-02-28')}
+          customInput={<Button variant="outlined">End Date</Button>}
         />
-      </div>
-      <button onClick={handleFetchData}>Fetch Data</button>
-      <div style={{ width: '80%', margin: 'auto', height: '400px' }}>
+        <Button variant="contained" onClick={handleFetchData}>Fetch Data</Button>
+      </Box>
+      <Typography variant="h6" align="center">
+        Selected Date Range: {startDate.toLocaleString()} - {endDate.toLocaleString()}
+      </Typography>
+      <Box sx={{ height: '60vh', width: '100%', maxWidth: '1200px', margin: 'auto' }}>
         <Line data={chartData} options={chartOptions} />
-      </div>
-      <div style={{ margin: '20px' }}>
-        <h2>Metrics</h2>
-        <p>☀️ Total PV Production: {totalPVProduction.toFixed(2)} kWh</p>
-        <p>☀️🤝🏘️ PV Production Sold to Neighbors: {pvSoldToNeighbors.toFixed(2)} kWh</p>
-        <p>⚡ Total Consumption: {totalConsumption.toFixed(2)} kWh</p>
-      </div>
-      <button onClick={() => setShowPVTable(!showPVTable)}>Show PV Data</button>
-      {showPVTable && (
-        <>
-          <h2>PV Data</h2>
-          <Table data={dataPV} />
-        </>
-      )}
-      <button onClick={() => setShowLoadTable(!showLoadTable)}>Show Load Data</button>
-      {showLoadTable && (
-        <>
-          <h2>Load Data</h2>
-          <Table data={dataLoad} />
-        </>
-      )}
-    </div>
+      </Box>
+      <Box mt={4} textAlign="center">
+        <Typography variant="h4" gutterBottom>
+          Metrics
+        </Typography>
+        <Typography variant="body1">☀️ Total PV Production: {totalPVProduction.toFixed(2)} kWh</Typography>
+        <Typography variant="body1">☀️🤝🏘️ PV Production Sold to Neighbors: {pvSoldToNeighbors.toFixed(2)} kWh</Typography>
+        <Typography variant="body1">⚡ Total Consumption: {totalConsumption.toFixed(2)} kWh</Typography>
+      </Box>
+      <Box textAlign="center" mt={2}>
+        <Button variant="outlined" onClick={() => setShowPVTable(!showPVTable)} style={{ margin: '10px' }}>
+          {showPVTable ? 'Hide PV Data' : 'Show PV Data'}
+        </Button>
+        {showPVTable && (
+          <>
+            <Typography variant="h5" mt={2}>PV Data</Typography>
+            <TableComponent data={dataPV} />
+          </>
+        )}
+        <Button variant="outlined" onClick={() => setShowLoadTable(!showLoadTable)} style={{ margin: '10px' }}>
+          {showLoadTable ? 'Hide Load Data' : 'Show Load Data'}
+        </Button>
+        {showLoadTable && (
+          <>
+            <Typography variant="h5" mt={2}>Load Data</Typography>
+            <TableComponent data={dataLoad} />
+          </>
+        )}
+      </Box>
+    </Container>
   );
 };
 
-const Table = ({ data }) => (
-  <table style={{ margin: 'auto', marginTop: '20px', border: '1px solid black', borderCollapse: 'collapse' }}>
-    <thead>
-      <tr>
-        <th style={{ border: '1px solid black', padding: '8px' }}>Date</th>
-        <th style={{ border: '1px solid black', padding: '8px' }}>Value (kW)</th>
-      </tr>
-    </thead>
-    <tbody>
-      {data.map((item, index) => (
-        <tr key={index}>
-          <td style={{ border: '1px solid black', padding: '8px' }}>{item.timestamp}</td>
-          <td style={{ border: '1px solid black', padding: '8px' }}>{item.power}</td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
+const TableComponent = ({ data }) => (
+  <TableContainer component={Paper} sx={{ maxWidth: '1200px', margin: 'auto', marginTop: '20px' }}>
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableCell>Date</TableCell>
+          <TableCell>Value (kW)</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {data.map((item, index) => (
+          <TableRow key={index}>
+            <TableCell>{new Date(item.timestamp).toLocaleString()}</TableCell>
+            <TableCell>{item.power}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  </TableContainer>
 );
 
 export default App;
