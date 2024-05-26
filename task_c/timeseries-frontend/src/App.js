@@ -115,9 +115,9 @@ const App = () => {
       </div>
       <div style={{ margin: '20px' }}>
         <h2>Metrics</h2>
-        <p>Total PV Production: {totalPVProduction.toFixed(2)} kWh</p>
-        <p>PV Production Sold to Neighbors: {pvSoldToNeighbors.toFixed(2)} kWh</p>
-        <p>Total Consumption: {totalConsumption.toFixed(2)} kWh</p>
+        <p>☀️ Total PV Production: {totalPVProduction.toFixed(2)} kWh</p>
+        <p>☀️🤝🏘️ PV Production Sold to Neighbors: {pvSoldToNeighbors.toFixed(2)} kWh</p>
+        <p>⚡ Total Consumption: {totalConsumption.toFixed(2)} kWh</p>
       </div>
       <button onClick={() => setShowPVTable(!showPVTable)}>Show PV Data</button>
       {showPVTable && (
