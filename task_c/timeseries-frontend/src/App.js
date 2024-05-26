@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { fetchData } from './api';
+import { Line } from 'react-chartjs-2';
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,9 +13,6 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { Line } from 'react-chartjs-2';
-import DatePicker from 'react-datepicker';
-import "react-datepicker/dist/react-datepicker.css";
 
 // Register necessary Chart.js components
 ChartJS.register(
@@ -32,6 +32,9 @@ const App = () => {
   const [dataLoad, setDataLoad] = useState([]);
   const [showPVTable, setShowPVTable] = useState(false);
   const [showLoadTable, setShowLoadTable] = useState(false);
+  const [totalPVProduction, setTotalPVProduction] = useState(0);
+  const [totalConsumption, setTotalConsumption] = useState(0);
+  const [pvSoldToNeighbors, setPvSoldToNeighbors] = useState(0);
 
   const handleFetchData = async () => {
     const start = formatDate(startDate);
@@ -40,10 +43,23 @@ const App = () => {
     const dataLoad = await fetchData('load', start, end);
     setDataPV(dataPV);
     setDataLoad(dataLoad);
+    calculateMetrics(dataPV, dataLoad);
   };
 
   const formatDate = date => {
     return `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)}-${('0' + date.getHours()).slice(-2)}-${('0' + date.getMinutes()).slice(-2)}`;
+  };
+
+  const calculateMetrics = (dataPV, dataLoad) => {
+    const totalPV = dataPV.reduce((acc, item) => acc + item.power, 0) / 4 * 1000;
+    const totalLoad = dataLoad.reduce((acc, item) => acc + item.power, 0) / 4 * 1000;
+    const pvSold = dataPV.reduce((acc, item, index) => {
+      const loadPower = dataLoad[index] ? dataLoad[index].power : 0;
+      return acc + Math.max(0, item.power - loadPower);
+    }, 0) / 4 * 1000;
+    setTotalPVProduction(totalPV);
+    setTotalConsumption(totalLoad);
+    setPvSoldToNeighbors(pvSold);
   };
 
   const chartData = {
@@ -96,6 +112,12 @@ const App = () => {
       <button onClick={handleFetchData}>Fetch Data</button>
       <div style={{ width: '80%', margin: 'auto' }}>
         <Line data={chartData} />
+      </div>
+      <div style={{ margin: '20px' }}>
+        <h2>Metrics</h2>
+        <p>Total PV Production: {totalPVProduction.toFixed(2)} kWh</p>
+        <p>PV Production Sold to Neighbors: {pvSoldToNeighbors.toFixed(2)} kWh</p>
+        <p>Total Consumption: {totalConsumption.toFixed(2)} kWh</p>
       </div>
       <button onClick={() => setShowPVTable(!showPVTable)}>Show PV Data</button>
       {showPVTable && (
