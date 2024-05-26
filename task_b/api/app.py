@@ -12,7 +12,6 @@ base_dir = os.path.abspath(os.path.dirname(__file__))
 app.config["SQLALCHEMY_DATABASE_URI"] = (
     f"sqlite:///{os.path.join(base_dir, 'instance', 'data.db')}"
 )
-
 # Disable the modification tracking system of SQLAlchemy to save system resources
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 

@@ -7,6 +7,7 @@ class EnergyData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     muid = db.Column(db.String(36), nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False)
+    energy = db.Column(db.Float, nullable=False)
     type = db.Column(db.String(50))  # 'pv' or 'load'
 
     @classmethod

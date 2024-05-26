@@ -48,6 +48,18 @@ def load_data(filepath, data_type):
     print(f"Loaded data from {filepath} into the database.")
 
 
+def query_random_entries():
+    """Query and print some random entries from the energydata table to verify data insertion."""
+    with app.app_context():
+        random_entries = (
+            db.session.query(EnergyData).limit(5).all()
+        )  # Fetch 5 random entries
+        for entry in random_entries:
+            print(
+                f"id: {entry.id}, muid: {entry.muid}, timestamp: {entry.timestamp}, type: {entry.type}"
+            )
+
+
 def main():
     # Directory where the JSON files will be saved
     data_dir = "exnaton_challenge/task_b/data"
@@ -72,6 +84,9 @@ def main():
             url, file_path
         ):  # Only load data if download was successful or file exists
             load_data(file_path, type)
+
+    # Query some random entries to verify data insertion
+    # query_random_entries()
 
 
 if __name__ == "__main__":
