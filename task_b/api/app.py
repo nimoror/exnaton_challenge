@@ -3,10 +3,12 @@ from datetime import datetime
 
 from database import db
 from flask import Flask, jsonify, request
+from flask_cors import CORS  # requried for REACT Frontend
 from models import EnergyData
 
 # Create a new Flask application instance
 app = Flask(__name__)
+CORS(app)
 
 # Configure the Flask application to use SQLite as the database
 base_dir = os.path.abspath(os.path.dirname(__file__))
