@@ -43,10 +43,12 @@ def load_data(filepath, data_type):
                 for key in power_keys:
                     if key in item:
                         power = item[key]
+                        measurement_id = key
                         break
                 quality = item["tags"]["quality"]
                 new_record = EnergyData(
                     muid=muid,
+                    measurement_id=measurement_id,
                     timestamp=timestamp,
                     measurement=measurement,
                     quality=quality,
