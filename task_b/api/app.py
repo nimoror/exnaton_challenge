@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from database import db
 from flask import Flask, jsonify, request
@@ -30,32 +31,45 @@ def index():
 # Define a route to access energy data, this route allows querying by 'muid' and 'type'
 @app.route("/energydata")
 def get_energy_data():
-    # Retrieve query parameters from the URL, if provided
-    muid = request.args.get("muid", default=None, type=str)
-    data_type = request.args.get("type", default=None, type=str)
+    # Fetch query parameters from the URL, if provided
+    muid = request.args.get("muid")
+    measurement_id = request.args.get("measurement_id")
+    data_type = request.args.get("type")
+    start_datetime = request.args.get("start")  # Expected in "YYYY-MM-DD-HH-MM"
+    end_datetime = request.args.get("end")  # Expected in "YYYY-MM-DD-HH-MM"
 
     # Start building the database query using the EnergyData model
     query = EnergyData.query
 
-    # If a 'muid' parameter is provided, filter results by 'muid'
     if muid:
-        query = query.filter_by(muid=muid)
-    # If a 'type' parameter is provided, filter results by 'type'
+        query = query.filter(EnergyData.muid == muid)
+    if measurement_id:
+        query = query.filter(EnergyData.measurement_id == measurement_id)
     if data_type:
-        query = query.filter_by(type=data_type)
+        query = query.filter(EnergyData.type == data_type)
 
-    # Execute the query and format each resulting record as a dictionary
+    # Filter by datetime range
+    if start_datetime and end_datetime:
+        try:
+            start = datetime.strptime(start_datetime, "%Y-%m-%d-%H-%M")
+            end = datetime.strptime(end_datetime, "%Y-%m-%d-%H-%M")
+            query = query.filter(
+                EnergyData.timestamp >= start, EnergyData.timestamp <= end
+            )
+        except ValueError:
+            return jsonify({"error": "Invalid datetime format"}), 400
+
     results = [
         {
-            "muid": d.muid,
-            "measurement_id": d.id,
-            "timestamp": d.timestamp.isoformat(),
-            "measurement": d.measurement,
-            "quality": d.quality,
-            "power": d.power,
-            "type": d.type,
+            "muid": record.muid,
+            "measurement_id": record.measurement_id,
+            "timestamp": record.timestamp.isoformat(),
+            "measurement": record.measurement,
+            "quality": record.quality,
+            "power": record.power,
+            "type": record.type,
         }
-        for d in query.all()
+        for record in query.all()
     ]
 
     # Convert the list of dictionaries to a JSON response to return to the client
