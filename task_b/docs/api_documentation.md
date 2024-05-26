@@ -1,41 +1,60 @@
-# API Documentation
+# Energy Data API Documentation
 
-## Endpoints
+## Overview
+This API provides access to energy data collected and stored in an SQLite database, allowing retrieval based on various parameters including measurement ID, data type, and datetime range.
 
-### GET /measurements
+## API Endpoints
 
-Retrieve measurements from the database.
+### 1. Root Endpoint
 
-#### Query Parameters
-- `muid`: (Optional) Filter by measurement unit ID.
-- `start`: (Optional) Filter measurements from this date (ISO format).
-- `stop`: (Optional) Filter measurements until this date (ISO format).
+- **Endpoint:** `/`
+- **Method:** GET
+- **Description:** Provides a simple greeting, useful for initial health checks of the API.
+- **Response:**
+  - `200 OK`: Returns a simple greeting message.
+  - **Example Response:**
+    ```json
+    "Hello, World!"
+    ```
 
-#### Example Request
-GET /measurements?muid=95ce3367&start=2023-02-01T00:00:00&stop=2023-03-01T00:00:00
+### 2. Fetch Energy Data
 
-#### Example Response
-```json
-[
-    {
-        "muid": "95ce3367",
-        "timestamp": "2023-02-01T00:00:00",
-        "value": 0.0117
-    },
-    ...
-]
+- **Endpoint:** `/energydata`
+- **Method:** GET
+- **Description:** Retrieves energy data filtered by optional parameters such as measurement unit ID (`muid`), measurement ID (`measurement_id`), type of data (`type`), and a datetime range (`start` and `end`).
+- **Query Parameters:**
+  - `muid` (optional): Filters data by the measurement unit ID.
+  - `measurement_id` (optional): Filters data by specific measurement ID.
+  - `type` (optional): Filters data by type (e.g., 'pv', 'load').
+  - `start` (optional but requires `end` if used): Start of the datetime range, format "YYYY-MM-DD-HH-MM".
+  - `end` (optional but requires `start` if used): End of the datetime range, format "YYYY-MM-DD-HH-MM".
+- **Success Response:**
+  - **Code:** `200 OK`
+  - **Content Example:**
+    ```json
+    [
+        {
+            "muid": "example_id",
+            "measurement_id": "0100021D00FF",
+            "timestamp": "2023-01-01T00:00:00Z",
+            "measurement": "energy",
+            "quality": "measured",
+            "power": 12.34,
+            "type": "pv"
+        }
+    ]
+    ```
+- **Error Response:**
+  - **Code:** `400 Bad Request`
+  - **Content:** `{ "error": "Invalid datetime format" }`
+  - **Description:** Returned if the `start` or `end` datetime parameters are provided but do not match the required format.
 
-#### 6. Create Dockerfile and docker-compose.yml
+## Running the API
 
-**Dockerfile:**
-```Dockerfile
-FROM python:3.8-slim
+To run the API locally:
 
-WORKDIR /app
+1. Ensure Python and Flask are installed.
+2. Navigate to the project directory.
+3. Execute the command: `python app.py`
+4. Access the API through `http://localhost:5000/`.
 
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
-
-COPY . .
-
-CMD ["python", "api/app.py"]
