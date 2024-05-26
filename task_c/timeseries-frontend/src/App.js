@@ -13,6 +13,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import { Chart } from 'react-chartjs-2';
 
 // Register necessary Chart.js components
 ChartJS.register(
@@ -41,9 +42,12 @@ const App = () => {
     const end = formatDate(endDate);
     const dataPV = await fetchData('pv', start, end);
     const dataLoad = await fetchData('load', start, end);
-    setDataPV(dataPV);
-    setDataLoad(dataLoad);
-    calculateMetrics(dataPV, dataLoad);
+    // Multiply the power values by 1000
+    const scaledDataPV = dataPV.map(d => ({ ...d, power: d.power * 1000 }));
+    const scaledDataLoad = dataLoad.map(d => ({ ...d, power: d.power * 1000 }));
+    setDataPV(scaledDataPV);
+    setDataLoad(scaledDataLoad);
+    calculateMetrics(scaledDataPV, scaledDataLoad);
   };
 
   const formatDate = date => {
@@ -51,12 +55,12 @@ const App = () => {
   };
 
   const calculateMetrics = (dataPV, dataLoad) => {
-    const totalPV = dataPV.reduce((acc, item) => acc + item.power, 0) / 4 * 1000;
-    const totalLoad = dataLoad.reduce((acc, item) => acc + item.power, 0) / 4 * 1000;
+    const totalPV = dataPV.reduce((acc, item) => acc + item.power, 0) / 4;
+    const totalLoad = dataLoad.reduce((acc, item) => acc + item.power, 0) / 4;
     const pvSold = dataPV.reduce((acc, item, index) => {
       const loadPower = dataLoad[index] ? dataLoad[index].power : 0;
       return acc + Math.max(0, item.power - loadPower);
-    }, 0) / 4 * 1000;
+    }, 0) / 4;
     setTotalPVProduction(totalPV);
     setTotalConsumption(totalLoad);
     setPvSoldToNeighbors(pvSold);
@@ -80,6 +84,33 @@ const App = () => {
         tension: 0.1
       }
     ]
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Energy Consumption and PV Production',
+      },
+    },
+    scales: {
+      y: {
+        title: {
+          display: true,
+          text: 'Power (kW)',
+        },
+      },
+      x: {
+        title: {
+          display: true,
+          text: 'Timestamp',
+        },
+      },
+    },
   };
 
   return (
@@ -111,7 +142,7 @@ const App = () => {
       </div>
       <button onClick={handleFetchData}>Fetch Data</button>
       <div style={{ width: '80%', margin: 'auto' }}>
-        <Line data={chartData} />
+        <Line data={chartData} options={chartOptions} />
       </div>
       <div style={{ margin: '20px' }}>
         <h2>Metrics</h2>
@@ -142,7 +173,7 @@ const Table = ({ data }) => (
     <thead>
       <tr>
         <th style={{ border: '1px solid black', padding: '8px' }}>Date</th>
-        <th style={{ border: '1px solid black', padding: '8px' }}>Value</th>
+        <th style={{ border: '1px solid black', padding: '8px' }}>Value (kW)</th>
       </tr>
     </thead>
     <tbody>
