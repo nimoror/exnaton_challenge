@@ -33,16 +33,27 @@ def load_data(filepath, data_type):
         ]  # Access the 'data' key which contains the list of measurements.
         with app.app_context():  # Ensure we are in the Flask app context to handle database
             for item in data:
+                muid = item["tags"]["muid"]
+                timestamp = datetime.strptime(
+                    item["timestamp"], "%Y-%m-%dT%H:%M:%S.%fZ"
+                )
+                measurement = item["measurement"]
+                power_keys = ["0100011D00FF", "0100021D00FF"]
+                power = None
+                for key in power_keys:
+                    if key in item:
+                        power = item[key]
+                        break
+                quality = item["tags"]["quality"]
                 new_record = EnergyData(
-                    muid=item["tags"]["muid"],
-                    timestamp=datetime.strptime(
-                        item["timestamp"], "%Y-%m-%dT%H:%M:%S.%fZ"
-                    ),
-                    energy=item.get(
-                        "0100021D00FF", 0
-                    ),  # Use .get() with default value 0
+                    muid=muid,
+                    timestamp=timestamp,
+                    measurement=measurement,
+                    quality=quality,
+                    power=power,
                     type=data_type,
                 )
+
                 db.session.add(new_record)
             db.session.commit()
     print(f"Loaded data from {filepath} into the database.")

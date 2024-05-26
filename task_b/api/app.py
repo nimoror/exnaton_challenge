@@ -49,7 +49,9 @@ def get_energy_data():
         {
             "muid": d.muid,
             "timestamp": d.timestamp.isoformat(),
-            "energy": d.energy,
+            "measurement": d.measurement,
+            "quality": d.quality,
+            "power": d.power,
             "type": d.type,
         }
         for d in query.all()
