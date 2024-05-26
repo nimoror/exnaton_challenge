@@ -1,58 +1,74 @@
 import React, { useState } from 'react';
+import { fetchData } from './api';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 
 const App = () => {
-  const [startDate, setStartDate] = useState(new Date('2023-02-01T00:00:00'));
-  const [endDate, setEndDate] = useState(new Date('2023-02-28T00:00:00'));
-  const [data, setData] = useState([]);
+  const [startDate, setStartDate] = useState(new Date('2023-02-02T00:00:00'));
+  const [endDate, setEndDate] = useState(new Date('2023-02-03T00:00:00'));
+  const [dataPV, setDataPV] = useState([]);
+  const [dataLoad, setDataLoad] = useState([]);
 
   const handleFetchData = async () => {
-    // Format the date as 'YYYY-MM-DD-HH-MM'
-    const format = date => `${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${("0" + date.getDate()).slice(-2)}-00-00`;
-    const response = await fetch(`http://localhost:5000/energydata?start=${format(startDate)}&end=${format(endDate)}`);
-    const result = await response.json();
-    setData(result); // This assumes the API returns an array of objects
+    const start = formatDate(startDate);
+    const end = formatDate(endDate);
+    const dataPV = await fetchData('pv', start, end);
+    const dataLoad = await fetchData('load', start, end);
+    setDataPV(dataPV);
+    setDataLoad(dataLoad);
+  };
+
+  const formatDate = date => {
+    return `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + date.getDate()).slice(-2)}-${('0' + date.getHours()).slice(-2)}-${('0' + date.getMinutes()).slice(-2)}`;
   };
 
   return (
     <div>
-      <h1>Simple React App</h1>
+      <h1>Time Series Data Visualization</h1>
       <DatePicker
         selected={startDate}
         onChange={date => setStartDate(date)}
-        dateFormat="yyyy-MM-dd"
+        showTimeSelect
+        dateFormat="yyyy-MM-dd HH:mm"
+        timeFormat="HH:mm"
         minDate={new Date('2023-02-01')}
         maxDate={new Date('2023-02-28')}
       />
       <DatePicker
         selected={endDate}
         onChange={date => setEndDate(date)}
-        dateFormat="yyyy-MM-dd"
+        showTimeSelect
+        dateFormat="yyyy-MM-dd HH:mm"
+        timeFormat="HH:mm"
         minDate={new Date('2023-02-01')}
         maxDate={new Date('2023-02-28')}
       />
       <button onClick={handleFetchData}>Fetch Data</button>
-      {data.length > 0 && (
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Power (MW)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((item, index) => (
-              <tr key={index}>
-                <td>{item.timestamp}</td>
-                <td>{item.power}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      <h2>PV Data</h2>
+      <Table data={dataPV} />
+      <h2>Load Data</h2>
+      <Table data={dataLoad} />
     </div>
   );
 };
+
+const Table = ({ data }) => (
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      {data.map((item, index) => (
+        <tr key={index}>
+          <td>{item.timestamp}</td>
+          <td>{item.power}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+);
 
 export default App;
