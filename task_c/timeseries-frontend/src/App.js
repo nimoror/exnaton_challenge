@@ -88,6 +88,7 @@ const App = () => {
 
   const chartOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top',
@@ -141,7 +142,7 @@ const App = () => {
         />
       </div>
       <button onClick={handleFetchData}>Fetch Data</button>
-      <div style={{ width: '80%', margin: 'auto' }}>
+      <div style={{ width: '80%', margin: 'auto', height: '400px' }}>
         <Line data={chartData} options={chartOptions} />
       </div>
       <div style={{ margin: '20px' }}>
