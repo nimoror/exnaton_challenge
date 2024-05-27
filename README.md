@@ -1,6 +1,3 @@
-
-
-
 # Overview
 
 This github project hosts my solution for the Exnaton coding challenge.
@@ -9,6 +6,7 @@ It inlcudes three tasks:
 - Task A: Data Analysis
 - Task B: Backend
 - Task C: Frontend
+
 
 # Project Structure
 ```
@@ -64,6 +62,7 @@ exnaton_challenge/
     └── README.md
 ```
 
+
 # Results
 
 ## Task A
@@ -78,46 +77,36 @@ I set up a React app for the Frontend. Again this only works locally after the c
 ![Frontend Screenshot](images/Frontend_screenshot.png)
 *Interactive visualization of energy consumption*
 
+
 # Getting Started
 
-## Prerequisites
-Docker
-Node.js and npm
-Python 3.11
+## Prerequisites (BEWARE: Potentially more needed (To-Do))
+- Docker
+- Node.js and npm
+- Python 3.11
 
 ## Setup and Run Instructions (BEWARE: This is not working (TO-DO)! Only works locally atm!)
 Using Docker
-Clone the repository:
+1. Clone the repository:
+    git clone https://github.com/your-username/exnaton_challenge.git
+    cd exnaton_challenge
 
-sh
-Code kopieren
-git clone https://github.com/your-username/exnaton_challenge.git
-cd exnaton_challenge
-Build and run the Docker containers:
-
-sh
-Code kopieren
-docker-compose up --build
-Access the API at http://localhost:5000/measurements.
+2. Build and run the Docker containers:
+    docker-compose up --build
+    Access the API at http://localhost:5000/measurements.
 
 Running Locally
-Setup Flask Backend
-
-sh
-Code kopieren
-cd task_b/api
-python -m venv venv
-source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-pip install -r requirements.txt
-python app.py
-Setup React Frontend
-
-sh
-Code kopieren
-cd ../../task_c/timeseries-frontend
-npm install
-npm start
-Access the application at http://localhost:3000.
+1. Setup Flask Backend
+    cd task_b/api
+    python -m venv venv
+    source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+    pip install -r requirements.txt
+    python app.py
+2. Setup React Frontend
+    cd ../../task_c/timeseries-frontend
+    npm install
+    npm start
+3. Access the application at http://localhost:3000.
 
 
 # Contact
