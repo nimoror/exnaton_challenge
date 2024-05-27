@@ -12,57 +12,71 @@ It inlcudes three tasks:
 
 # Project Structure
 
-exnaton_challenge/
-│
-├── task_a/                     ### Task A: Data Analysis ###
-│   ├── data/                   # Folder for JSON data files
-│   │   ├── 1db7649e.json
-│   │   └── 95ce3367.json
-│   ├── notebooks/              # Jupyter notebooks for analysis
-│   │   ├── data_analysis.ipynb 
-│   │   └── Profile1.html    
-│   └── src/                    # Python scripts for data handling
-│       └── download_data.py
-│
-├── task_b/                     ### Task B: API Development ###
-│   ├── api/
-│   │   ├── __init__.py         
-│   │   ├── app.py                  # Main application file for setting up the API server (Flask)
-│   │   ├── data_fetcher.py         # Handles fetching and and commiting data from external source to database
-│   │   ├── database.py             # Initializes the database
-│   │   ├── models.py               # Defines database schema/models using an ORM approach
-│   │   └── instance/
-│   │       └── data.db
-│   ├── data/
-│   │   ├── 1db7649e.json
-│   │   └── 95ce3367.json
-│   ├── docs/
-│   │   └── api_documentation.md
-│   ├── Dockerfile
-│   └── test.py
-│
-├── task_c/                     ### Task C: Frontend Development ###
-│   ├── public/
-│   │   ├── favicon.ico
-│   │   ├── index.html
-│   │   ├── logo192.png
-│   │   ├── logo512.png
-│   │   ├── manifest.json
-│   │   └── robots.txt
-│   └── src/
-│       ├── api.js              # Handles API requests and manages data interaction between the frontend and the backend
-│       ├── App.css             # Main CSS file for styling the global aspects of the frontend application
-│       ├── App.js              # Main React component that serves as the root of the frontend application, orchestrating other components
-│       ├── App.test.js
-│       ├── DatePickerStyles.css
-│       ├── index.css
-│       ├── index.js
-│       ├── logo.svg
-│       ├── reportWebVitals.js
-│       └── setupTests.js
-│
-├── .gitignore
-└── README.md
+└───exnaton_challenge
+    │   README.md
+    │
+    ├───images
+    │       Frontend_screenshot.png
+    │
+    ├───task_a
+    │   ├───data
+    │   │       1db7649e.json
+    │   │       95ce3367.json
+    │   │       
+    │   ├───notebooks
+    │   │       data_analysis.ipynb
+    │   │       Profile1.html
+    │   │
+    │   └───src
+    │           download_data.py
+    │
+    ├───task_b
+    │   │   Dockerfile
+    │   │
+    │   ├───api
+    │   │   │   app.py
+    │   │   │   database.py
+    │   │   │   data_fetcher.py
+    │   │   │   models.py
+    │   │   │   requirements.txt
+    │   │   │   test.py
+    │   │   │   __init__.py
+    │   │   │
+    │   │   ├───instance
+    │   │   │       data.db
+    │   │   │
+    │   │   └───__pycache__
+    │   │           app.cpython-311.pyc
+    │   │           database.cpython-311.pyc
+    │   │           models.cpython-311.pyc
+    │   │
+    │   ├───data
+    │   │       1db7649e.json
+    │   │       95ce3367.json
+    │   │
+    │   └───docs
+    │           api_documentation.md
+    │
+    └───task_c
+        └───timeseries-frontend
+            │   .gitignore
+            │   package-lock.json
+            │   package.json
+            │   README.md
+            │
+            ├───public
+            │
+            └───src
+                    api.js
+                    App.css
+                    App.js
+                    App.test.js
+                    DatePickerStyles.css
+                    index.css
+                    index.js
+                    logo.svg
+                    reportWebVitals.js
+                    setupTests.js
 
 
 # Results
