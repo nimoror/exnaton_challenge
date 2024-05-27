@@ -37,8 +37,8 @@ exnaton_challenge/
 │   │   ├── 1db7649e.json
 │   │   └── 95ce3367.json
 │   ├── docs/
-│   │   ├── api_documentation.md
-│   │   └── Dockerfile
+│   │   └── api_documentation.md
+│   ├── Dockerfile
 │   └── test.py
 │
 ├── task_c/                     ### Task C: Frontend Development ###
@@ -64,6 +64,7 @@ exnaton_challenge/
 ├── .gitignore
 └── README.md
 
+
 # Results
 
 ## Task A
@@ -75,7 +76,7 @@ Then for the software engineering tasks every tool was new to me so it was more 
 ## Task C
 I set up a React app for the Frontend. Again this only works locally after the command "npm start" in the terminal at the path ../task_c/timeseries-frontend. It accesses the db built in Task B and visualizes the data interactively as in the image below.
 
-![Frontend Screenshot](/exnaton_challenge/images/Frontend_screenshot.png)
+![Frontend Screenshot](images/Frontend_screenshot.png)
 *Interactive visualization of energy consumption*
 
 # Getting Started
